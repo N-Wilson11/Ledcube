@@ -1,77 +1,75 @@
-
-//Initialiseer pinnen
 const int latchPin = 3;
 const int clockPin = 4;
 const int dataPin = 2;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//PATRONEN
-
-//Knipperen
-const byte pattern0[] = {B11111111, B00000000};
-
 // Om en om
-const byte pattern1[] = {B10101010, B01010101};
+const byte pattern0[2] = {B10101010, B01010101};
 
+// Heen en terug
+byte pattern1[14];
+
+// Heen en terug dubbel;
+byte pattern2[12];
 
 // Allebei de kanten op
-const byte pattern2[] = {B00000001, B00000010, B00000100, B00001000, B00010000, B00100000, B01000000, B10000000,B01000000,B00100000,B00010000,B00001000,B00000100,B00000010};
-
-
-//Twee tegelijk
-const byte pattern3[] = {B00000110,B00001100,B00011000,B00110000,B01100000,B11000000,B11000000, B01100000, B00110000, B00011000, B00001100, B00000110};
-
-
-
-//1001 patroon
-const byte pattern4[] = {B10000001, B01000010, B00100100, B00011000, B00100100, B01000010};
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+const byte pattern3[6] = {B10000001, B01000010, B00100100, B00011000, B00100100, B01000010};
 
 void setup() {
   pinMode(latchPin, OUTPUT);
   pinMode(clockPin, OUTPUT);
   pinMode(dataPin, OUTPUT);
+
+  pattern1[7] = 1;
+  byte value = 2;
+  for (int i = 1; i < 8; ++i) {
+    pattern1[7 - i] = value;
+    if (i < 7) {
+      pattern1[7 + i] = value;
+    }
+    value *= 2;
+  }
+
+  pattern2[6] = 3;
+  value = 6;
+  for (int i = 1; i < 7; ++i) {
+    pattern2[6 - i] = value;
+    if (i < 6) {
+      pattern2[6 + i] = value;
+    }
+    value *= 2;
+  }
 }
 
-
 void loop() {
+  for (int i = 0; i < 4; i++) {
+    for (int num = 0; num < sizeof(pattern0)/sizeof(pattern0[0]); num++) {
+      showLeds(pattern0[num]);
+      delay(300);
+    }
+  }
 
-for (int i = 0; i < 2; i++) {
-    for (int num = 0; num < sizeof(pattern1); num++) {
+  for (int i = 0; i < 2; i++) {
+    for (int num = 0; num < sizeof(pattern1)/sizeof(pattern1[0]); num++) {
       showLeds(pattern1[num]);
       delay(300);
     }
   }
-  //Loop voor tweede patroon
+
   for (int i = 0; i < 2; i++) {
-    for (int num = 0; num < sizeof(pattern2); num++) {
+    for (int num = 0; num < sizeof(pattern2)/sizeof(pattern2[0]); num++) {
       showLeds(pattern2[num]);
       delay(300);
     }
   }
 
-  //Loop voor derde patroon
-  for (int i = 0; i < 3; i++) {
-    for (int num = 0; num < sizeof(pattern3); num++) {
+  for (int i = 0; i < 2; i++) {
+    for (int num = 0; num < sizeof(pattern3)/sizeof(pattern3[0]); num++) {
       showLeds(pattern3[num]);
       delay(300);
     }
   }
-
-//Loop voor vierde patroon
-  for (int i = 0; i < 2; i++) {
-    for (int num = 0; num < sizeof(pattern4); num++) {
-      showLeds(pattern4[num]);
-      delay(300);
-    }
-  }
-
 }
 
-
-//Void functie om de leds aan te sturen
 void showLeds(byte value) {
   digitalWrite(latchPin, LOW);
   shiftOut(dataPin, clockPin, MSBFIRST, value);
